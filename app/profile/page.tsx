@@ -3,29 +3,45 @@
 import { useState } from 'react';
 
 export default function ProfilePage() {
-  const [user, setUser] = useState({
-    name: 'สมชาย ใจดี',
-    email: 'somchai@example.com',
-    phone: '081-234-5678',
-    age: 25,
-    address: 'กรุงเทพมหานคร'
-  });
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: 'นายจิรัฏฐ์ มุณีกาญจน์',
+      email: 'jiratmuneekarn@gmail.com',
+      phone: '0980180435',
+      age: 20,
+      address: 'ระนอง'
+    },
+    {
+      id: 2,
+      name: 'นายชนสรณ์ หนูแก้ว',
+      email: 'cnschanasorn@gmail.com',
+      phone: '0624395704',
+      age: 20,
+      address: 'กระบี่'
+    }
+  ]);
 
+  const [selectedUser, setSelectedUser] = useState(users[0]);
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(user);
+  const [editData, setEditData] = useState(selectedUser);
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditData(user);
+    setEditData(selectedUser);
   };
 
   const handleSave = () => {
-    setUser(editData);
+    const updatedUsers = users.map(user =>
+      user.id === selectedUser.id ? editData : user
+    );
+    setUsers(updatedUsers);
+    setSelectedUser(editData);
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setEditData(user);
+    setEditData(selectedUser);
     setIsEditing(false);
   };
 
@@ -37,22 +53,44 @@ export default function ProfilePage() {
     }));
   };
 
+  const handleUserSelect = (user: typeof users[0]) => {
+    setSelectedUser(user);
+    setEditData(user);
+    setIsEditing(false);
+  };
+
   return (
     <div>
       <h1>โปรไฟล์</h1>
+
+      <div>
+        <h3>เลือกผู้ใช้:</h3>
+        {users.map(user => (
+          <button
+            key={user.id}
+            onClick={() => handleUserSelect(user)}
+            style={{
+              margin: '5px',
+              padding: '5px 10px',
+              backgroundColor: selectedUser.id === user.id ? '#007bff' : '#f8f9fa',
+              color: selectedUser.id === user.id ? 'white' : 'black'
+            }}
+          >
+            {user.name}
+          </button>
+        ))}
+      </div>
 
       <div>
         <h2>ข้อมูลส่วนตัว</h2>
 
         {!isEditing ? (
           <div>
-            <p>ชื่อ: {user.name}</p>
-            <p>อีเมล: {user.email}</p>
-            <p>เบอร์โทร: {user.phone}</p>
-            <p>อายุ: {user.age}</p>
-            <p>ที่อยู่: {user.address}</p>
-
-            <button onClick={handleEdit}>แก้ไข</button>
+            <p>ชื่อ: {selectedUser.name}</p>
+            <p>อีเมล: {selectedUser.email}</p>
+            <p>เบอร์โทร: {selectedUser.phone}</p>
+            <p>อายุ: {selectedUser.age}</p>
+            <p>ที่อยู่: {selectedUser.address}</p>
           </div>
         ) : (
           <div>
@@ -114,4 +152,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
